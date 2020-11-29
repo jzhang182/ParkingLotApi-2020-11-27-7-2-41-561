@@ -67,5 +67,28 @@ namespace ParkingLotApiTest.ControllerTest
             var context = scopedServices.GetRequiredService<ParkingLotContext>();
             Assert.Empty(context.ParkingLots.ToList());
         }
+
+        [Fact]
+        public async Task Should_query_parking_lot_when_get_by_id()
+        {
+            var client = GetClient();
+            var parkingLotDto = new ParkingLotDTO()
+            {
+                Name = "myLot3",
+                Capacity = 1,
+                Location = " ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var postResponse = await client.PostAsync($"/parkinglots", content);
+            var id = postResponse.Headers.Location.AbsoluteUri.Split("/")[4];
+
+            var response = await client.GetAsync($"/parkinglots/{id}");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            ParkingLotDTO actualLot = JsonConvert.DeserializeObject<ParkingLotDTO>(responseString);
+            Assert.Equal(parkingLotDto, actualLot);
+        }
     }
 }
