@@ -1,0 +1,102 @@
+Parking Lots APIs:
+
+POST /parkinglots
+Request:
+{
+	name: "",
+	capacity: 10,
+	location: "",
+}
+Response:
+201:  Header: Location: /parkinglots/{parkingLotId}
+400: Message: "Name already exists/Capacity must be positive/Input cannot be null"
+
+DELETE /parkinglots/{parkingLotId}
+Response:
+204
+404: Message: "Id not found"
+
+GET /parkinglots?pageSize=15&pageIndex={pageIndex}
+Response:
+200: [{
+	name: "",
+	capacity: 10,
+	location: "",
+}]
+
+GET /parkinglots/{parkingLotId}
+Response:
+200:
+{
+	name: "",
+	capacity: 10,
+	location: "",
+}
+404: Message: "Id not found"
+
+PATCH /parkinglots/{parkingLotId}
+Request:
+{
+	capacity: 10,
+}
+Response:
+200:
+{
+	name: "",
+	capacity: 10,
+	location: "",
+}
+400: Message: "Capacity cannot be null/Capacity cannot be negative"
+404: Message: "Id not found"
+
+Orders APIs:
+
+POST /orders
+Request:
+{
+  "parkingLotName": "",
+  "plateNumber": ""
+}
+Response:
+201:
+Header: Location: /orders/{orderId}
+Body:
+{
+	OrderNumber: "",
+	NameOfParkingLot: "",
+	PlateNumber: "",
+	CreationTime: DateTime,
+	IsOrderOpen: True
+}
+400: Message: "Input cannot be null/The parking lot is full. "
+
+GET /orders/{orderId}
+Response
+200:
+{
+	OrderNumber: "",
+	NameOfParkingLot: "",
+	PlateNumber: "",
+	CreationTime: DateTime,
+	CloseTime: DateTime,
+	IsOrderOpen: False,
+}
+404: Message: "Order not found. "
+
+PATCH /orders/{orderId}
+Request:
+{
+	IsOrderOpen: False;
+}
+Response:
+200:
+{
+	OrderNumber: "",
+	NameOfParkingLot: "",
+	PlateNumber: "",
+	CreationTime: DateTime,
+	CloseTime: DateTime
+	IsOrderOpen: False
+}
+400: Message: "Order is already closed/invalid. "
+404: Message: "Order not found. "
