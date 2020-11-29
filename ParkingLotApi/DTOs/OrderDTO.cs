@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ParkingLotApi.Entities
+namespace ParkingLotApi.DTOs
 {
-    class OrderDTO
+    public class OrderDTO
     {
     }
 }

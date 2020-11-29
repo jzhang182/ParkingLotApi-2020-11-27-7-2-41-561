@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ParkingLotApi.Controllers
 {
-    class OrdersController
+    public class OrdersController
     {
     }
 }

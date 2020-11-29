@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ParkingLotApi.Services
 {
-    class OrderService
+    public class OrderService
     {
     }
 }
