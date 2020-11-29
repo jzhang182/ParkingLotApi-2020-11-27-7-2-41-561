@@ -17,8 +17,12 @@ namespace ParkingLotApiTest.ControllerTest
     [Collection("ControllerTest")]
     public class ParkingLotControllerTest : TestBase
     {
+        private readonly ParkingLotContext context;
         public ParkingLotControllerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
+            var scope = Factory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            context = scopedServices.GetRequiredService<ParkingLotContext>();
         }
 
         [Fact]
@@ -37,9 +41,6 @@ namespace ParkingLotApiTest.ControllerTest
             var createResponse = await client.PostAsync($"/parkinglots", content);
 
             createResponse.EnsureSuccessStatusCode();
-            var scope = Factory.Services.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var context = scopedServices.GetRequiredService<ParkingLotContext>();
             Assert.Single(context.ParkingLots.ToList());
             var firstLot = await context.ParkingLots.FirstOrDefaultAsync();
             Assert.Equal(parkingLotDto, new ParkingLotDTO(firstLot));
