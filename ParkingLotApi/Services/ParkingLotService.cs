@@ -16,8 +16,7 @@ namespace ParkingLotApi.Services
         public Task<ParkingLotDTO> GetAsync(string id);
         public Task DeleteAsync(string id);
         public Task<List<ParkingLotDTO>> GetAllAsync(int? pageSize, int? offset);
-        //public Task<ParkingLotDTO> GetByNameAsync(string lotName);
-        //public Task UpdateAsync(string id, ParkingLotUpdateDTO parkingLotUpdateDto);
+        public Task UpdateAsync(string id, ParkingLotUpdateModel parkingLotUpdateModel);
     }
 
     public class ParkingLotService : IParkingLotService
@@ -67,6 +66,13 @@ namespace ParkingLotApi.Services
         {
             var parkingLot = await parkingLotContext.ParkingLots.FirstOrDefaultAsync(p => p.Id == id);
             return new ParkingLotDTO(parkingLot);
+        }
+
+        public async Task UpdateAsync(string id, ParkingLotUpdateModel parkingLotUpdateModel)
+        {
+            var target = this.parkingLotContext.ParkingLots.FirstOrDefault(lot => lot.Id == id);
+            target.Capacity = parkingLotUpdateModel.Capacity;
+            await this.parkingLotContext.SaveChangesAsync();
         }
     }
 }

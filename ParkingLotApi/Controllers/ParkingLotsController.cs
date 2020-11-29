@@ -50,6 +50,24 @@ namespace ParkingLotApi.Controllers
             return Ok(parkingLots);
         }
 
+        [HttpPatch("{id}")]
+        public async Task<ActionResult> UpdateAsync(string id, ParkingLotUpdateModel parkingLotUpdateModel)
+        {
+            if (parkingLotUpdateModel.Capacity < 0)
+            {
+                return BadRequest();
+            }
+
+            var target = await this.parkingLotService.GetAsync(id);
+            if (target == null)
+            {
+                return NotFound();
+            }
+
+            await this.parkingLotService.UpdateAsync(id, parkingLotUpdateModel);
+            return NoContent();
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<ParkingLotDTO>> DeleteAsync(string id)
         {

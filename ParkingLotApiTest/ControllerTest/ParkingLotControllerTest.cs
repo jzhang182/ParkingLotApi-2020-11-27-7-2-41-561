@@ -98,13 +98,13 @@ namespace ParkingLotApiTest.ControllerTest
             var client = GetClient();
             var parkingLotDto1 = new ParkingLotDTO()
             {
-                Name = "myLot1",
+                Name = "myLot4",
                 Capacity = 1,
                 Location = " ",
             };
             var parkingLotDto2 = new ParkingLotDTO()
             {
-                Name = "myLot2",
+                Name = "myLot5",
                 Capacity = 1,
                 Location = " ",
             };
@@ -121,6 +121,36 @@ namespace ParkingLotApiTest.ControllerTest
             var responseString = await response.Content.ReadAsStringAsync();
             List<ParkingLotDTO> actualLots = JsonConvert.DeserializeObject<List<ParkingLotDTO>>(responseString);
             Assert.Equal(new List<ParkingLotDTO> { parkingLotDto1 }, actualLots);
+        }
+
+        [Fact]
+        public async Task Should_change_parking_lot_capacity_when_patch()
+        {
+            var client = GetClient();
+            var parkingLotDto = new ParkingLotDTO()
+            {
+                Name = "myLot6",
+                Capacity = 1,
+                Location = " ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var postResponse = await client.PostAsync($"/parkinglots", content);
+            var id = postResponse.Headers.Location.AbsoluteUri.Split("/")[4];
+            var parkingLotUpdateModel = new ParkingLotUpdateModel()
+            {
+                Capacity = 2,
+            };
+            var httpContent2 = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
+
+            var response = await client.PatchAsync($"/parkinglots/{id}", content2);
+
+            response.EnsureSuccessStatusCode();
+            var scope = Factory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var context = scopedServices.GetRequiredService<ParkingLotContext>();
+            Assert.Equal(parkingLotUpdateModel.Capacity, context.ParkingLots.FirstOrDefault().Capacity);
         }
     }
 }
