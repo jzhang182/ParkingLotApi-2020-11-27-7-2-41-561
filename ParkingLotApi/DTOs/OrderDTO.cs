@@ -6,5 +6,7 @@ namespace ParkingLotApi.DTOs
 {
     public class OrderDTO
     {
+        public string ParkingLotName { get; set; }
+        public string PlateNumber { get; set; }
     }
 }
