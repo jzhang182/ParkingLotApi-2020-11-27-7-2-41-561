@@ -17,12 +17,8 @@ namespace ParkingLotApiTest.ControllerTest
     [Collection("ControllerTest")]
     public class ParkingLotControllerTest : TestBase
     {
-        private readonly ParkingLotContext context;
         public ParkingLotControllerTest(CustomWebApplicationFactory<Startup> factory) : base(factory)
         {
-            var scope = Factory.Services.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            context = scopedServices.GetRequiredService<ParkingLotContext>();
         }
 
         [Fact]
@@ -31,7 +27,7 @@ namespace ParkingLotApiTest.ControllerTest
             var client = GetClient();
             var parkingLotDto = new ParkingLotDTO()
             {
-                Name = "myLot",
+                Name = "myLot1",
                 Capacity = 1,
                 Location = " ",
             };
@@ -41,9 +37,35 @@ namespace ParkingLotApiTest.ControllerTest
             var createResponse = await client.PostAsync($"/parkinglots", content);
 
             createResponse.EnsureSuccessStatusCode();
-            Assert.Single(context.ParkingLots.ToList());
+            var scope = Factory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var context = scopedServices.GetRequiredService<ParkingLotContext>();
             var firstLot = await context.ParkingLots.FirstOrDefaultAsync();
             Assert.Equal(parkingLotDto, new ParkingLotDTO(firstLot));
+        }
+
+        [Fact]
+        public async Task Should_delete_parking_lot_when_delete()
+        {
+            var client = GetClient();
+            var parkingLotDto = new ParkingLotDTO()
+            {
+                Name = "myLot2",
+                Capacity = 1,
+                Location = " ",
+            };
+            var httpContent = JsonConvert.SerializeObject(parkingLotDto);
+            StringContent content = new StringContent(httpContent, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var postResponse = await client.PostAsync($"/parkinglots", content);
+            var id = postResponse.Headers.Location.AbsoluteUri.Split("/")[4];
+
+            var response = await client.DeleteAsync($"/parkinglots/{id}");
+
+            response.EnsureSuccessStatusCode();
+            var scope = Factory.Services.CreateScope();
+            var scopedServices = scope.ServiceProvider;
+            var context = scopedServices.GetRequiredService<ParkingLotContext>();
+            Assert.Empty(context.ParkingLots.ToList());
         }
     }
 }

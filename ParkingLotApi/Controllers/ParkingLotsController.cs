@@ -31,10 +31,29 @@ namespace ParkingLotApi.Controllers
             return CreatedAtAction(nameof(Get), new { Id = newLotId }, parkingLotDto);
         }
 
-        [HttpGet]
-        public string Get()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ParkingLotDTO>> Get(string id)
         {
-            return "Hello World";
+            var target = await this.parkingLotService.GetAsync(id);
+            if (target == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(target);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ParkingLotDTO>> DeleteAsync(string id)
+        {
+            var target = await this.parkingLotService.GetAsync(id);
+            if (target == null)
+            {
+                return NotFound();
+            }
+
+            await this.parkingLotService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

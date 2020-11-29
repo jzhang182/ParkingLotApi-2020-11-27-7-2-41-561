@@ -1,4 +1,5 @@
-﻿using ParkingLotApi.DTOs;
+﻿using Microsoft.EntityFrameworkCore;
+using ParkingLotApi.DTOs;
 using ParkingLotApi.Entities;
 using ParkingLotApi.Repository;
 using System;
@@ -12,10 +13,10 @@ namespace ParkingLotApi.Services
     public interface IParkingLotService
     {
         public Task<string> AddAsync(ParkingLotDTO parkingLotDto);
+        public Task<ParkingLotDTO> GetAsync(string id);
+        public Task DeleteAsync(string id);
         //public Task<List<ParkingLotDTO>> GetAllAsync(int? pageSize, int? pageIndex);
-        //public Task<ParkingLotDTO> GetByIdAsync(string id);
         //public Task<ParkingLotDTO> GetByNameAsync(string lotName);
-        //public Task DeleteAsync(string id);
         //public Task UpdateAsync(string id, ParkingLotUpdateDTO parkingLotUpdateDto);
     }
 
@@ -44,6 +45,19 @@ namespace ParkingLotApi.Services
             await parkingLotContext.ParkingLots.AddAsync(parkingLot);
             await parkingLotContext.SaveChangesAsync();
             return parkingLot.Id;
+        }
+
+        public async Task DeleteAsync(string id)
+        {
+            var parkingLot = await parkingLotContext.ParkingLots.FirstOrDefaultAsync(p => p.Id == id);
+            parkingLotContext.ParkingLots.Remove(parkingLot);
+            await parkingLotContext.SaveChangesAsync();
+        }
+
+        public async Task<ParkingLotDTO> GetAsync(string id)
+        {
+            var parkingLot = await parkingLotContext.ParkingLots.FirstOrDefaultAsync(p => p.Id == id);
+            return new ParkingLotDTO(parkingLot);
         }
     }
 }
