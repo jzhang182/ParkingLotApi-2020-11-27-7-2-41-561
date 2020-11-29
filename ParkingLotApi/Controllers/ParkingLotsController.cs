@@ -43,6 +43,13 @@ namespace ParkingLotApi.Controllers
             return Ok(target);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ParkingLotDTO>>> GetAllAsync(int? pageSize, int? pageIndex)
+        {
+            var parkingLots = await this.parkingLotService.GetAllAsync(pageSize, pageIndex);
+            return Ok(parkingLots);
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<ParkingLotDTO>> DeleteAsync(string id)
         {

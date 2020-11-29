@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Mime;
@@ -89,6 +90,37 @@ namespace ParkingLotApiTest.ControllerTest
             var responseString = await response.Content.ReadAsStringAsync();
             ParkingLotDTO actualLot = JsonConvert.DeserializeObject<ParkingLotDTO>(responseString);
             Assert.Equal(parkingLotDto, actualLot);
+        }
+
+        [Fact]
+        public async Task Should_query_parking_lot_when_get_by_page()
+        {
+            var client = GetClient();
+            var parkingLotDto1 = new ParkingLotDTO()
+            {
+                Name = "myLot1",
+                Capacity = 1,
+                Location = " ",
+            };
+            var parkingLotDto2 = new ParkingLotDTO()
+            {
+                Name = "myLot2",
+                Capacity = 1,
+                Location = " ",
+            };
+            var httpContent1 = JsonConvert.SerializeObject(parkingLotDto1);
+            StringContent content1 = new StringContent(httpContent1, Encoding.UTF8, MediaTypeNames.Application.Json);
+            var httpContent2 = JsonConvert.SerializeObject(parkingLotDto1);
+            StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
+            await client.PostAsync($"/parkinglots", content1);
+            await client.PostAsync($"/parkinglots", content2);
+
+            var response = await client.GetAsync($"/parkinglots?pagesize=1&pageindex=1");
+
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            List<ParkingLotDTO> actualLots = JsonConvert.DeserializeObject<List<ParkingLotDTO>>(responseString);
+            Assert.Equal(new List<ParkingLotDTO> { parkingLotDto1 }, actualLots);
         }
     }
 }
