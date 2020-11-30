@@ -19,10 +19,9 @@ Response:
 
 GET /parkinglots?pageSize=15&pageIndex={pageIndex}
 Response:
-200: [{
+200: 
+[{
 	name: "",
-	capacity: 10,
-	location: "",
 }]
 
 GET /parkinglots/{parkingLotId}
@@ -69,7 +68,8 @@ Body:
 	CreationTime: DateTime,
 	IsOrderOpen: True
 }
-400: Message: "Input cannot be null/The parking lot is full. "
+400: Message: "Input cannot be null/The parking lot is full/Already parked."
+404: Message: "Lot not found"
 
 GET /orders/{orderId}
 Response
