@@ -141,7 +141,7 @@ namespace ParkingLotApiTest.ControllerTest
             {
                 Capacity = 2,
             };
-            var httpContent2 = JsonConvert.SerializeObject(parkingLotDto);
+            var httpContent2 = JsonConvert.SerializeObject(parkingLotUpdateModel);
             StringContent content2 = new StringContent(httpContent2, Encoding.UTF8, MediaTypeNames.Application.Json);
 
             var response = await client.PatchAsync($"/parkinglots/{id}", content2);

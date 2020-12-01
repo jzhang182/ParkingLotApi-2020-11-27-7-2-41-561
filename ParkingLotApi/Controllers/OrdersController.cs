@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ParkingLotApi.DTOs;
+using ParkingLotApi.Entities;
 using ParkingLotApi.Services;
 
 namespace ParkingLotApi.Controllers
@@ -30,11 +31,11 @@ namespace ParkingLotApi.Controllers
                 return BadRequest();
             }
 
-            return CreatedAtAction(nameof(GetAsync), new { orderNumber = orderNumber.OrderNumber }, orderNumber);
+            return CreatedAtAction(nameof(Get), new { orderNumber }, orderNumber);
         }
 
         [HttpGet("{orderNumber}")]
-        public async Task<ActionResult<OrderDTO>> GetAsync(string orderNumber)
+        public async Task<ActionResult<OrderDTO>> Get(string orderNumber)
         {
             var target = await this.orderService.GetAsync(orderNumber);
             if (target == null)
@@ -43,6 +44,26 @@ namespace ParkingLotApi.Controllers
             }
 
             return Ok(target);
+        }
+
+        [HttpPatch("{orderNumber}")]
+        public async Task<ActionResult<OrderEntity>> UpdateAsync(string orderNumber, OrderUpdateModel orderUpdateModel)
+        {
+            var order = await this.orderService.GetAsync(orderNumber);
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            if (order.IsOpen != true)
+            {
+                return BadRequest();
+            }
+
+            var result = await this.orderService.UpdateAsync(orderNumber, orderUpdateModel);
+
+            return result;
         }
     }
 }
